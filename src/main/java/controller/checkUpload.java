@@ -23,8 +23,11 @@ import org.apache.tomcat.util.http.fileupload.RequestContext;
 import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 
+import com.spire.doc.Document;
+import com.spire.doc.FileFormat;
+import com.spire.doc.ToPdfParameterList;
+
 import model.BO.*;
-import controller.*;
 
 
 /**
@@ -47,44 +50,44 @@ public class checkUpload extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// multiple files
-		
 		List<Part> fileParts = request.getParts().stream().filter(part -> "files".equals(part.getName()) && part.getSize() > 0).collect(Collectors.toList()); 
 		request.setAttribute("fileParts", fileParts);
-		
 		handleFile_BO handleFile = new handleFile_BO();
 		int id = 0;
 		try {
 			id = handleFile.getIdMax_BO();
-			
 		} catch (ClassNotFoundException e1) {
 			e1.printStackTrace();
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
 		String userName = Homeop.getId();
-		System.out.print(userName);
 		ArrayList<String> listFileName = new ArrayList<String>();
 		ArrayList<InputStream> listFileContent = new ArrayList<InputStream>();
-		
 	    for (Part filePart : fileParts) {
-	    	
 	        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // MSIE fix.
 	        InputStream fileContent = filePart.getInputStream();
-	        
-			//try {
-				
-				//handleFile.insertUrl_BO(id, userName);
+
+			try {
 				id++;
+				handleFile.insertUrl_BO(id, userName,fileName);
 				listFileName.add(fileName);
 				listFileContent.add(fileContent);
+				try
+				{
+					handleFile.threadHandleFile(id, fileName, fileContent);
+				}
+				catch(Exception err)
+				{
+					
+				}
+				System.out.println("oke");
 				
-				handleFile.threadHandleFile(fileContent);
-				
-			//} catch (ClassNotFoundException e) {
-				//e.printStackTrace();
-			//} catch (SQLException e) {
-			//	e.printStackTrace();
-			//}
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 	    }
 	    request.setAttribute("listFileName", listFileName);
 	    request.setAttribute("listFileContent", listFileContent);

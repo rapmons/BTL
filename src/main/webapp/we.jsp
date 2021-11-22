@@ -36,11 +36,15 @@
         </div>
         <hr>
          <div >
-			<input type="submit" value="View files" class="dangxuata" >
+			<input type="submit" value="Convert files" class="dangxuata" >
 			<br>
-            <input type="submit" value="Convert files" class="dangxuata" > 
-            </div>
+			 </form>
+			  <form action="view" method="post">
+			  <input type="hidden"  name ="ip1234" value="<%=a.getId()%>">
+            <input type="submit" value="View files" class="dangxuata" > 
             </form>
+            </div>
+            
             <form action="LogoutServlet" >
              
 			<input type="submit" value="Login out" class="dangxuat" >
